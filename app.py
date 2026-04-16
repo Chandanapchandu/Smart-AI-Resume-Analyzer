@@ -467,12 +467,6 @@ class ResumeApp:
     def add_footer(self):
         """Add a footer to all pages"""
         st.markdown("<hr style='margin-top: 50px; margin-bottom: 20px;'>", unsafe_allow_html=True)
-        
-        col1, col2, col3 = st.columns([1, 3, 1])
-        
-        with col2:
-            # GitHub star button with lottie animation
-
 
     def load_image(self, image_name):
         """Load image from static directory"""
@@ -874,15 +868,11 @@ class ResumeApp:
         if st.button("Generate Resume 📄", type="primary"):
             print("Validating form data...")
             print(f"Session state form data: {st.session_state.form_data}")
-            print(
-    f"Email input value: {
-        st.session_state.get(
-            'email_input',
-             '')}")
+            email_value = st.session_state.get('email_input', '')
+            print(f"Email input value: {email_value}")
 
             # Get the current values from form
-            current_name = st.session_state.form_data['personal_info']['full_name'].strip(
-            )
+            current_name = st.session_state.form_data['personal_info']['full_name'].strip()
             current_email = st.session_state.email_input if 'email_input' in st.session_state else ''
 
             print(f"Current name: {current_name}")
@@ -934,19 +924,17 @@ class ResumeApp:
                             # Show snowflake effect
                             st.snow()
 
+                            file_name = f"{current_name.replace(' ', '_')}_resume.docx"
                             st.download_button(
                                 label="Download Resume 📥",
                                 data=resume_buffer,
-                                file_name=f"{
-    current_name.replace(
-        ' ', '_')}_resume.docx",
+                                file_name=file_name,
                                 mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                                 on_click=lambda: st.balloons()
                             )
                         except Exception as db_error:
-                            print(
-    f"Warning: Failed to save to database: {
-        str(db_error)}")
+                            error_msg = f"Warning: Failed to save to database: {str(db_error)}"
+                            print(error_msg)
                             # Still allow download even if database save fails
                             st.warning(
                                 "⚠️ Resume generated but couldn't be saved to database")
@@ -954,12 +942,11 @@ class ResumeApp:
                             # Show balloons effect
                             st.balloons()
 
+                            file_name_2 = f"{current_name.replace(' ', '_')}_resume.docx"
                             st.download_button(
                                 label="Download Resume 📥",
                                 data=resume_buffer,
-                                file_name=f"{
-    current_name.replace(
-        ' ', '_')}_resume.docx",
+                                file_name=file_name_2,
                                 mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                                 on_click=lambda: st.balloons()
                             )
@@ -1391,9 +1378,8 @@ class ResumeApp:
 
                         # Show results based on document type
                         if analysis.get('document_type') != 'resume':
-                            st.error(
-    f"⚠️ This appears to be a {
-        analysis['document_type']} document, not a resume!")
+                            doc_type = analysis['document_type']
+                            st.error(f"⚠️ This appears to be a {doc_type} document, not a resume!")
                             st.warning(
                                 "Please upload a proper resume for ATS analysis.")
                             return
